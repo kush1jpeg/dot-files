@@ -1,0 +1,48 @@
+[colors.primary]
+background = "#1e1e1e" 
+foreground = "#d4d4d4" 
+
+[colors.normal]
+black   = "#2e2e2e"
+red     = "#d16969"
+green   = "#608b4e"
+yellow  = "#dcdcaa"
+blue    = "#569cd6"
+magenta = "#c586c0"
+cyan    = "#4ec9b0"
+white   = "#d4d4d4"
+
+[colors.bright]
+black   = "#3e3e3e"
+red     = "#e06c75"
+green   = "#98c379"
+yellow  = "#e5c07b"
+blue    = "#61afef"
+magenta = "#c678dd"
+cyan    = "#56b6c2"
+white   = "#e0e0e0"
+
+[colors.cursor]
+text = "#1e1e1e"
+cursor = "#d4d4d4"
+
+[window]
+opacity = 1
+
+ #not some shit comic sans
+[font]
+normal = { family = "Hack", style = "Regular" }
+bold = { family = "Hack", style = "Bold" }
+size = 14.0
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+vi_mode_style = "Beam"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window.padding]
+x = 5
+y = 5
