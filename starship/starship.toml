@@ -1,0 +1,17 @@
+format = """$directory$git_branch$git_status$cmd_duration$character"""
+
+[directory]
+style = "bold yellow"
+truncation_length = 3
+
+[git_branch]
+style = "bold purple"
+
+[cmd_duration]
+min_time = 500
+style = "yellow"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+
