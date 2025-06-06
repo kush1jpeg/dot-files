@@ -1,8 +1,7 @@
 return {
   {
     "Mofiqul/dracula.nvim",
-    priority = 1000, -- must be high to load first
-    lazy = false,    -- load it during startup
+    lazy = false, -- load it during startup
   },
   {
     "rebelot/kanagawa.nvim",
@@ -13,7 +12,7 @@ return {
         transparent = true,
         theme = "wave", -- or dragon / lotus / default
         background = {
-          dark = "wave",     -- try "dragon" or "lotus"
+          dark = "wave", -- try "dragon" or "lotus"
           light = "lotus",
         },
       })
