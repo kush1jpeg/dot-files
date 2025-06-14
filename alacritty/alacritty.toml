@@ -27,11 +27,11 @@ text = "#1e1e1e"
 cursor = "#d4d4d4"
 
 [window]
-opacity = 1
+opacity = 0.98
 
  #not some shit comic sans
 [font]
-normal = { family = "Hack", style = "Regular" }
+normal = { family = "FiraCode Nerd Font", style = "Regular" }
 bold = { family = "Hack", style = "Bold" }
 size = 14.0
 
