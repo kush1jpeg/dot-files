@@ -7,6 +7,27 @@
 -- * disable/enabled LazyVim plugins
 -- * override the configuration of LazyVim plugins
 return {
+
+-- Diagnostics & LSP UI
+{
+  "nvimdev/lspsaga.nvim",
+  dependencies = {"nvim-lspconfig", "nvim-treesitter"},
+  config = function()
+    require("lspsaga").setup({})
+    vim.keymap.set("n", "gl", "<cmd>Lspsaga show_line_diagnostics<CR>")
+    vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>")
+    vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>")
+  end,
+},
+{
+  "folke/trouble.nvim",
+  opts = { use_diagnostic_signs = true },
+  config = function(_, opts)
+    require("trouble").setup(opts)
+    vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<CR>")
+  end
+},
+
   -- add gruvbox
   { "ellisonleao/gruvbox.nvim" },
 

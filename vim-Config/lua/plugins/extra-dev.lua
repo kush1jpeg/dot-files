@@ -1,5 +1,35 @@
 return {
 
+  --for error messages
+
+  {
+    "nvimdev/lspsaga.nvim",
+    event = "LspAttach",
+    config = function()
+      require("lspsaga").setup({})
+      -- Keymaps to view diagnostics
+      vim.keymap.set("n", "gl", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line Diagnostics" })
+      vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code Action" })
+      vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", { desc = "Hover Doc" })
+    end,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-lspconfig",
+    }
+  },
+
+  --clang config setup
+  {
+    "neovim/nvim-lspconfig",
+    lazy = false,
+    config = function()
+      require("lspconfig").clangd.setup({
+        cmd = { "clangd" },
+        filetypes = { "c", "cpp", "objc", "objcpp" },
+        root_dir = require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt", ".git"),
+      })
+    end,
+  },
   -- 🧪 Neotest with Vitest + Jest
   {
     "nvim-neotest/neotest",
@@ -98,6 +128,7 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
+        clangd = {},
         emmet_ls = {},
         tsserver = {},
         tailwindcss = {},
@@ -154,7 +185,7 @@ return {
     config = function()
       require("kanagawa").setup({
         transparent = true,
-        theme = "dragon", -- or dragon / lotus / default or wave
+        theme = "dragon",  -- or dragon / lotus / default or wave
         background = {
           dark = "dragon", -- try "dragon" or "lotus" or wave
           light = "lotus",
