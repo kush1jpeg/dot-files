@@ -160,6 +160,8 @@ return {
         typescript = { "prettier" },
         json = { "prettier" },
         css = { "prettier" },
+        c = { "clang_format" },
+        cpp = { "clang_format" },
       },
       --func to format the text on exit brruh
       format_on_save = function(bufnr)
