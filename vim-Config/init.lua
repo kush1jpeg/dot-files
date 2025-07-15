@@ -1,6 +1,6 @@
 vim.diagnostic.config({
   virtual_text = {
-    prefix = "",   -- or any icon
+    prefix = "", -- or any icon
     spacing = 2,
     source = "if_many",
     severity = { min = vim.diagnostic.severity.WARN },
@@ -14,9 +14,6 @@ vim.diagnostic.config({
 
 -- loading this for disablind the stupid err messg
 vim.g.lazyvim_check_order = false
-
--- 🧠 Set theme name BEFORE loading LazyVim
-vim.g.lazyvim_colorscheme = "dracula"
 
 -- 🚀 Load LazyVim setup
 require("config.lazy")

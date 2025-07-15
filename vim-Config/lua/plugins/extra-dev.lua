@@ -1,36 +1,30 @@
+-- FILE: plugins/extras.lua
 return {
-
-  --for error messages
-
   {
     "nvimdev/lspsaga.nvim",
     event = "LspAttach",
-    config = function()
-      require("lspsaga").setup({})
-      -- Keymaps to view diagnostics
-      vim.keymap.set("n", "gl", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line Diagnostics" })
-      vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code Action" })
-      vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", { desc = "Hover Doc" })
-    end,
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-lspconfig",
-    }
+    ui = {
+      border = "rounded",
+      colors = {
+        normal_bg = "#1f1f28",
+        title_bg = "#e0af68",
+      },
+    },
   },
 
-  --clang config setup
-  {
-    "neovim/nvim-lspconfig",
-    lazy = false,
-    config = function()
-      require("lspconfig").clangd.setup({
-        cmd = { "clangd" },
-        filetypes = { "c", "cpp", "objc", "objcpp" },
-        root_dir = require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt", ".git"),
-      })
-    end,
+  config = function()
+    require("lspsaga").setup({})
+    vim.keymap.set("n", "gl", "<cmd>Lspsaga show_line_diagnostics<CR>", { desc = "Line Diagnostics" })
+    vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { desc = "Code Action" })
+  end,
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter",
+    "nvim-lspconfig",
   },
-  -- 🧪 Neotest with Vitest + Jest
+  {
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover (Native)" })
+  },
+
   {
     "nvim-neotest/neotest",
     dependencies = {
@@ -42,20 +36,16 @@ return {
     },
     opts = function()
       local adapters = {}
-
       local ok_jest, jest = pcall(require, "neotest-jest")
       if ok_jest then
-        table.insert(
-          adapters,
-          jest({
-            jestCommand = "npm test --",
-            jestConfigFile = "jest.config.js",
-            env = { CI = true },
-            cwd = function()
-              return vim.fn.getcwd()
-            end,
-          })
-        )
+        table.insert(adapters, jest({
+          jestCommand = "npm test --",
+          jestConfigFile = "jest.config.js",
+          env = { CI = true },
+          cwd = function()
+            return vim.fn.getcwd()
+          end,
+        }))
       end
 
       local ok_vitest, vitest = pcall(require, "neotest-vitest")
@@ -63,28 +53,10 @@ return {
         table.insert(adapters, vitest({}))
       end
 
-      return {
-        adapters = adapters,
-      }
+      return { adapters = adapters }
     end,
   },
 
-  -- 🌈 Treesitter for JS/TS/HTML/CSS/etc.
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "javascript",
-        "typescript",
-        "tsx",
-        "json",
-        "html",
-        "css",
-      },
-    },
-  },
-
-  -- 🐞 DAP for Node debugging
   {
     "mfussenegger/nvim-dap",
     dependencies = {
@@ -95,9 +67,7 @@ return {
     },
     config = function()
       local ok, dap = pcall(require, "dap")
-      if not ok then
-        return
-      end
+      if not ok then return end
 
       dap.adapters.node2 = {
         type = "executable",
@@ -125,23 +95,6 @@ return {
   },
 
   {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        clangd = {},
-        emmet_ls = {},
-        tsserver = {},
-        tailwindcss = {},
-        -- 🔻 Add this to disable Deno
-        denols = {
-          autostart = false,
-        },
-      },
-    },
-  },
-
-  -- ✨ Snippets for React + more
-  {
     "L3MON4D3/LuaSnip",
     dependencies = {
       "rafamadriz/friendly-snippets",
@@ -151,7 +104,6 @@ return {
     end,
   },
 
-  -- 🔍 Null-ls for prettier/eslint format + lint
   {
     "stevearc/conform.nvim",
     opts = {
@@ -163,23 +115,14 @@ return {
         c = { "clang_format" },
         cpp = { "clang_format" },
       },
-      --func to format the text on exit brruh
       format_on_save = function(bufnr)
-        -- Disable autoformat for certain filetypes
         local ignore_filetypes = { "markdown" }
         return not vim.tbl_contains(ignore_filetypes, vim.bo[bufnr].filetype)
       end,
     },
   },
-  --themes
-  {
-    "Mofiqul/dracula.nvim",
-    priority = 1000,
-    lazy = false,
-    config = function()
-      vim.cmd.colorscheme("dracula")
-    end,
-  },
+
+  ---@diagnostic disable: missing-fields
   {
     "rebelot/kanagawa.nvim",
     priority = 1000,
@@ -187,9 +130,9 @@ return {
     config = function()
       require("kanagawa").setup({
         transparent = true,
-        theme = "dragon",  -- or dragon / lotus / default or wave
+        theme = "dragon",
         background = {
-          dark = "dragon", -- try "dragon" or "lotus" or wave
+          dark = "wave",
           light = "lotus",
         },
       })

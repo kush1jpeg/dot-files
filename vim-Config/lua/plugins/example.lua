@@ -1,75 +1,34 @@
--- since this is just an example spec, don't actually load anything here and return an empty spec
--- stylua: ignore
--- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
---
--- In your plugin files, you can:
--- * add extra plugins
--- * disable/enabled LazyVim plugins
--- * override the configuration of LazyVim plugins
+-- FILE: plugins/main.lua
 return {
-
--- Diagnostics & LSP UI
-{
-  "nvimdev/lspsaga.nvim",
-  dependencies = {"nvim-lspconfig", "nvim-treesitter"},
-  config = function()
-    require("lspsaga").setup({})
-    vim.keymap.set("n", "gl", "<cmd>Lspsaga show_line_diagnostics<CR>")
-    vim.keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>")
-    vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>")
-  end,
-},
-{
-  "folke/trouble.nvim",
-  opts = { use_diagnostic_signs = true },
-  config = function(_, opts)
-    require("trouble").setup(opts)
-    vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<CR>")
-  end
-},
-
-  -- add gruvbox
-  { "ellisonleao/gruvbox.nvim" },
-
-  -- Configure LazyVim to load gruvbox
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "gruvbox",
-    },
-  },
-
-  -- change trouble config
   {
     "folke/trouble.nvim",
-    -- opts will be merged with the parent spec
     opts = { use_diagnostic_signs = true },
+    config = function(_, opts)
+      require("trouble").setup(opts)
+      vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<CR>")
+    end,
   },
 
-
-  -- override nvim-cmp and add cmp-emoji
   {
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-emoji" },
-    ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
+      opts.sources = opts.sources or {}
       table.insert(opts.sources, { name = "emoji" })
     end,
   },
 
-  -- change some telescope options and a keymap to browse plugin files
   {
     "nvim-telescope/telescope.nvim",
     keys = {
-      -- add a keymap to browse plugin files
-      -- stylua: ignore
       {
         "<leader>fp",
-        function() require("telescope.builtin").find_files({ cwd = require("lazy.core.config").options.root }) end,
+        function()
+          require("telescope.builtin").find_files({ cwd = require("lazy.core.config").options.root })
+        end,
         desc = "Find Plugin File",
       },
     },
-    -- change some options
     opts = {
       defaults = {
         layout_strategy = "horizontal",
@@ -80,107 +39,63 @@ return {
     },
   },
 
-  -- add pyright to lspconfig
   {
     "neovim/nvim-lspconfig",
-    ---@class PluginLspOpts
     opts = {
-      ---@type lspconfig.options
       servers = {
-        -- pyright will be automatically installed with mason and loaded with lspconfig
+        clangd = {
+          cmd = { "clangd" },
+          filetypes = { "c", "cpp", "objc", "objcpp" },
+          root_dir = require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt", ".git"),
+        },
         pyright = {},
-      },
-    },
-  },
-
-  -- add tsserver and setup with typescript.nvim instead of lspconfig
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "jose-elias-alvarez/typescript.nvim",
-      init = function()
-        require("lazyvim.util").lsp.on_attach(function(_, buffer)
-          -- stylua: ignore
-          vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
-          vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
-        end)
-      end,
-    },
-    ---@class PluginLspOpts
-    opts = {
-      ---@type lspconfig.options
-      servers = {
-        -- tsserver will be automatically installed with mason and loaded with lspconfig
+        emmet_ls = {},
+        tailwindcss = {},
+        denols = { autostart = false },
         tsserver = {},
       },
-      -- you can do any additional lsp server setup here
-      -- return true if you don't want this server to be setup with lspconfig
-      ---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
       setup = {
-        -- example to setup with typescript.nvim
         tsserver = function(_, opts)
           require("typescript").setup({ server = opts })
           return true
         end,
-        -- Specify * to use this function as a fallback for any server
-        -- ["*"] = function(server, opts) end,
       },
+    },
+    dependencies = {
+      "jose-elias-alvarez/typescript.nvim",
     },
   },
 
-  -- for typescript, LazyVim also includes extra specs to properly setup lspconfig,
-  -- treesitter, mason and typescript.nvim. So instead of the above, you can use:
-  -- add more treesitter parsers
   {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
-        "bash",
-        "html",
-        "javascript",
-        "json",
-        "lua",
-        "markdown",
-        "markdown_inline",
-        "python",
-        "query",
-        "regex",
-        "tsx",
-        "typescript",
-        "vim",
-        "yaml",
+        "bash", "html", "javascript", "json", "lua", "markdown",
+        "markdown_inline", "python", "query", "regex", "tsx",
+        "typescript", "vim", "yaml",
       },
     },
   },
 
-  -- the opts function can also be used to change the default opts:
-{
-  "nvim-lualine/lualine.nvim",
-  event = "VeryLazy",
-  opts = function(_, opts)
-    opts.sections = opts.sections or {}
-    opts.sections.lualine_x = opts.sections.lualine_x or {}
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    opts = function(_, opts)
+      opts.sections = opts.sections or {}
+      opts.sections.lualine_x = opts.sections.lualine_x or {}
+      table.insert(opts.sections.lualine_x, function()
+        return "👹"
+      end)
+    end,
+  },
 
-    table.insert(opts.sections.lualine_x, function()
-      return "😄"
-    end)
-  end,
-},
-
-
-  -- add jsonls and schemastore packages, and setup treesitter for json, json5 and jsonc
   { import = "lazyvim.plugins.extras.lang.json" },
 
-  -- add any tools you want to have installed below
   {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "stylua",
-        "shellcheck",
-        "shfmt",
-        "flake8",
-        "typescript-language-server",
+        "stylua", "shellcheck", "shfmt", "flake8", "typescript-language-server",
       },
     },
   },
