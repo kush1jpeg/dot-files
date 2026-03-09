@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+# Directory where to store temporary data
+TMP_DIR="/tmp/rmpc"
+
+# Ensure the directory is created
+mkdir -p "$TMP_DIR"
+
+# Where to temporarily store the album art received from rmpc
+ALBUM_ART_PATH="$TMP_DIR/notification_cover"
+
+# Path to fallback album art if no album art is found by rmpc/mpd
+# Change this to your needs
+DEFAULT_ALBUM_ART_PATH="$HOME/.config/rmpc/themes/logo.png"
+
+# Save album art of the currently playing song to a file
+if ! rmpc albumart --output "$ALBUM_ART_PATH"; then
+  # Use default album art if rmpc returns non-zero exit code
+  ALBUM_ART_PATH="${DEFAULT_ALBUM_ART_PATH}"
+fi
+# magick convert "$ALBUM_ART_PATH" -resize 320x240^ "$ALBUM_ART_PATH"
+
+# Send the notification
+notify-send -i "${ALBUM_ART_PATH}" -a "rmpc" "Now Playing" "$ARTIST - $TITLE"
