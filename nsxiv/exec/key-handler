@@ -1,0 +1,12 @@
+#!/bin/sh
+
+while IFS= read -r file; do
+  case "$1" in
+  "C-r")
+    magick "$file" -rotate 90 "$file"
+    ;;
+  "C-R")
+    magick "$file" -rotate -90 "$file"
+    ;;
+  esac
+done
